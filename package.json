@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon --exec ts-node --files src/index.ts",
+    "postinstall": "npm run build",
     "build": "rimraf build/ && tsc --project tsconfig.production.json",
     "start": "pm2 start --name 'onestep-api' node -- -r ./tsconfig-paths.js build/index.js",
     "test": "jest --watchAll --detectOpenHandles --runInBand"
@@ -38,5 +39,8 @@
   },
   "_moduleDirectories": [
     "src"
-  ]
+  ],
+  "engines": {
+    "node": "14.15.3"
+  }
 }
