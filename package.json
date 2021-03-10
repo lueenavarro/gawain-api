@@ -8,7 +8,7 @@
     "dev": "nodemon --exec ts-node --files src/index.ts",
     "postinstall": "npm run build",
     "build": "rimraf build/ && tsc --project tsconfig.production.json",
-    "start": "node -- -r ./tsconfig-paths.js build/index.js",
+    "start": "node -r ./tsconfig-paths.js build/index.js",
     "test": "jest --watchAll --detectOpenHandles --runInBand"
   },
   "dependencies": {
