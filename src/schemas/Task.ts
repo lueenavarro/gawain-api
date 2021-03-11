@@ -8,6 +8,7 @@ export interface ITask extends Document {
 }
 
 const taskSchema = new Schema({
+  _id: { type: Schema.Types.ObjectId, required: true },
   task: { type: String, required: true },
   completed: { type: Boolean, default: false },
   list: { type: Schema.Types.ObjectId, ref: "TaskList", required: true },

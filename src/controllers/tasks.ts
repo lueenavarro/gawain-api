@@ -10,13 +10,12 @@ export const create = catchErrors(async (req, res) => {
   const { _id, task: incomingTask, date } = req.body;
 
   const taskList = await findOrInsert(TaskList, { date }, { date });
-  const task = new Task({
+  const task = await Task.create({
     _id,
     task: incomingTask,
     list: taskList._id,
   });
 
-  await task.save();
   await taskList.updateOne({ $push: { tasks: task._id } });
 
   res.respond(task);
