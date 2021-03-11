@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon --exec ts-node --files server-local.ts",
     "build": "rimraf build/ functions/ && tsc --project tsconfig.production.json && netlify-lambda build -c webpack.config.js ./build",
-    "start": "node -r ./tsconfig-paths.js build/index.js",
+    "start": "node -r ./tsconfig-paths.js build/server.js",
     "test": "jest --watchAll --detectOpenHandles --runInBand"
   },
   "dependencies": {

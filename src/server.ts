@@ -28,7 +28,9 @@ const initializeExpress = (): void => {
 
   app.use(addRespondToResponse);
 
-  attachPrivateRoutes(app);
+  const router = express.Router();
+  attachPrivateRoutes(router);
+  app.use("/.netlify/functions/server", router); // path must route to lambda
 
   app.use((req, _res, next) => next(new RouteNotFoundError(req.originalUrl)));
   app.use(handleError);
