@@ -1,6 +1,7 @@
 import "module-alias/register";
 import "dotenv/config";
 
+import serverless from "serverless-http";
 import express from "express";
 import cors from "cors";
 
@@ -21,8 +22,6 @@ const establishDatabaseConnection = async (): Promise<void> => {
 };
 
 const initializeExpress = (): void => {
-  const app = express();
-
   app.use(cors());
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
@@ -33,10 +32,6 @@ const initializeExpress = (): void => {
 
   app.use((req, _res, next) => next(new RouteNotFoundError(req.originalUrl)));
   app.use(handleError);
-
-  const port = process.env.PORT || 5000;
-  app.listen(port);
-  console.log(`listening to port ${port}`);
 };
 
 const initializeApp = async (): Promise<void> => {
@@ -44,4 +39,8 @@ const initializeApp = async (): Promise<void> => {
   initializeExpress();
 };
 
+let app = express();
 initializeApp();
+
+module.exports = app;
+module.exports.handler = serverless(app);

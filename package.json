@@ -5,8 +5,8 @@
   "license": "ISC",
   "private": true,
   "scripts": {
-    "dev": "nodemon --exec ts-node --files src/index.ts",
-    "build": "rimraf build/ && tsc --project tsconfig.production.json",
+    "dev": "nodemon --exec ts-node --files server-local.ts",
+    "build": "rimraf build/ functions/ && tsc --project tsconfig.production.json && netlify-lambda build -c webpack.config.js ./build",
     "start": "node -r ./tsconfig-paths.js build/index.js",
     "test": "jest --watchAll --detectOpenHandles --runInBand"
   },
@@ -19,8 +19,11 @@
     "module-alias": "^2.2.2",
     "moment": "^2.29.1",
     "mongoose": "^5.11.15",
+    "netlify-lambda": "^2.0.3",
     "pm2": "^4.5.5",
-    "tsconfig-paths": "^3.9.0"
+    "serverless-http": "^2.7.0",
+    "tsconfig-paths": "^3.9.0",
+    "tsconfig-paths-webpack-plugin": "^3.3.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",
