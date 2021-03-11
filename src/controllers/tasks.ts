@@ -7,12 +7,12 @@ import { findOrInsert, findOrThrow } from "utils/db";
 import { KeyString } from "types";
 
 export const create = catchErrors(async (req, res) => {
-  const { _id, task: incomingTask, date } = req.body;
+  const { _id, task: newTask, date } = req.body;
 
   const taskList = await findOrInsert(TaskList, { date }, { date });
   const task = await Task.create({
     _id,
-    task: incomingTask,
+    task: newTask,
     list: taskList._id,
   });
 
