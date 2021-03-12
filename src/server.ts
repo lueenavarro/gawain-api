@@ -11,7 +11,7 @@ import { RouteNotFoundError } from "errors";
 
 import { createDatabaseConnection } from "database/createConnection";
 
-import { attachPrivateRoutes } from "./routes";
+import * as tasks from "controllers/tasks";
 
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
@@ -29,7 +29,11 @@ const initializeExpress = (): void => {
   app.use(addRespondToResponse);
 
   const router = express.Router();
-  attachPrivateRoutes(router);
+  router.get("/tasks", tasks.find);
+  router.post("/tasks", tasks.create);
+  router.post("/tasks/move", tasks.move);
+  router.patch("/tasks/complete/:id", tasks.complete);
+  router.delete("/tasks/:id", tasks.remove);
   app.use("/.netlify/functions/server", router); // path must route to lambda
 
   app.use((req, _res, next) => next(new RouteNotFoundError(req.originalUrl)));
