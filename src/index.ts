@@ -1,4 +1,3 @@
-import "module-alias/register";
 import "dotenv/config";
 
 import serverless from "serverless-http";
@@ -28,13 +27,12 @@ const initializeExpress = (): void => {
 
   app.use(addRespondToResponse);
 
-  const router = express.Router();
   router.get("/tasks", tasks.find);
   router.post("/tasks", tasks.create);
   router.post("/tasks/move", tasks.move);
   router.patch("/tasks/complete/:id", tasks.complete);
   router.delete("/tasks/:id", tasks.remove);
-  app.use("/.netlify/functions/server", router); // path must route to lambda
+  app.use("/.netlify/functions/index", router); // path must route to lambda
 
   app.use((req, _res, next) => next(new RouteNotFoundError(req.originalUrl)));
   app.use(handleError);
@@ -45,8 +43,11 @@ const initializeApp = async (): Promise<void> => {
   initializeExpress();
 };
 
-let app = express();
+export const app = express();
+const router = express.Router();
 initializeApp();
 
-module.exports = app;
-module.exports.handler = serverless(app);
+export async function handler() {
+  await initializeApp();
+  return serverless(app);
+}

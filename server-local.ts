@@ -1,4 +1,4 @@
-const app = require("./src/server");
+import { app } from "./src/index";
 
 const port = process.env.PORT || 5000;
 app.listen(port);
