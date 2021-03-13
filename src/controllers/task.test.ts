@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 import { Task, TaskList } from "schemas";
 import { clearMockDB, startMockDB, stopMockDB } from "test/mockDB";
@@ -48,9 +48,13 @@ test("Create task", async () => {
     { date: "2021-03-03" }
   );
   expect(foiSpy).toHaveBeenCalledTimes(1);
-  expect(foundTask[0]?._id).toStrictEqual(fakeTaskId);
-  expect(foundTask[0]?.task).toBe("Go To Market");
-  expect(foundTask[0]?.list).toStrictEqual(fakeTaskListId);
+  expect(foundTask[0]).toStrictEqual(
+    expect.objectContaining({
+      _id: fakeTaskId,
+      task: "Go To Market",
+      list: fakeTaskListId,
+    })
+  );
 });
 
 test("Find task", async () => {
@@ -78,7 +82,6 @@ test("Move task", async () => {
   });
 
   const fakeTask = await Task.create({
-    _id: mongoose.Types.ObjectId(),
     task: "Go to market",
     list: fakeOldTaskList._id,
   });
@@ -111,18 +114,18 @@ test("Move task", async () => {
     { date: "2021-03-01" },
     { date: "2021-03-01" }
   );
-  expect(mockResponse.respond).toHaveBeenCalledWith({
-    _id: fakeTask._id,
-    completed: false,
-    list: fakeNewTaskList._id,
-    task: "Go to market",
-    __v: 0,
-  });
+  expect(mockResponse.respond).toHaveBeenCalledWith(
+    expect.objectContaining({
+      _id: fakeTask._id,
+      completed: false,
+      list: fakeNewTaskList._id,
+      task: "Go to market",
+    })
+  );
 });
 
 test("Remove task", async () => {
   const fakeTask = await Task.create({
-    _id: mongoose.Types.ObjectId(),
     task: "Go To Market",
     list: mongoose.Types.ObjectId(),
   });
@@ -151,4 +154,30 @@ test("Task already removed", async () => {
   await tasks.remove(mockRequest, mockResponse, next);
 
   expect(mockResponse.respond).toHaveBeenCalledWith(null);
+});
+
+test("Task completed", async () => {
+  const fakeTask = await Task.create({
+    task: "Go To Market",
+    list: mongoose.Types.ObjectId(),
+  });
+
+  const mockRequest: any = {
+    body: {
+      completed: true,
+    },
+    params: {
+      id: fakeTask._id,
+    },
+  };
+
+  await tasks.complete(mockRequest, mockResponse, next);
+
+  expect(mockResponse.respond).toHaveBeenCalledWith(
+    expect.objectContaining({
+      _id: fakeTask._id,
+      completed: true,
+      task: "Go To Market",
+    })
+  );
 });
