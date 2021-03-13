@@ -8,6 +8,5 @@ export const attachPrivateRoutes = (app: any): void => {
   taskRoutes.post("/move", tasks.move);
   taskRoutes.patch("/complete/:id", tasks.complete);
   taskRoutes.delete("/:id", tasks.remove);
-  console.log(taskRoutes);
   app.use("/tasks", taskRoutes);
 };

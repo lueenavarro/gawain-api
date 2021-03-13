@@ -8,10 +8,11 @@
 **/.env
 
 # production
-**/build
 **/npm-debug.log*
 
 # IDE
 .vscode
-# Local Netlify folder
-.netlify
+
+# webpack
+.webpack
+
