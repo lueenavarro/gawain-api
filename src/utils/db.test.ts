@@ -9,6 +9,7 @@ afterAll(stopMockDB);
 beforeEach(clearMockDB);
 
 const fakeTaskObj = {
+  _id: mongoose.Types.ObjectId(),
   task: "Go To Market",
   list: mongoose.Types.ObjectId(),
 };
@@ -16,7 +17,9 @@ const createSpy = jest.spyOn(Task, "create");
 
 test("findOrThrow should find", async () => {
   await Task.create(fakeTaskObj);
-  const foundTask = await findOrThrow(Task, { task: fakeTaskObj.task });
+  const foundTask = await findOrThrow(Task, {
+    task: fakeTaskObj.task,
+  });
   expect(foundTask.task).toBe(fakeTaskObj.task);
 });
 

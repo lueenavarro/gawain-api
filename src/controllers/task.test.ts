@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 import { Task, TaskList } from "schemas";
 import { clearMockDB, startMockDB, stopMockDB } from "test/mockDB";
@@ -22,8 +22,10 @@ beforeEach(async () => {
 });
 
 test("Create task", async () => {
+  const fakeTaskId = mongoose.Types.ObjectId();
   const mockRequest: any = {
     body: {
+      _id: fakeTaskId,
       task: "Go To Market",
       date: "2021-03-03",
     },
@@ -46,6 +48,7 @@ test("Create task", async () => {
     { date: "2021-03-03" }
   );
   expect(foiSpy).toHaveBeenCalledTimes(1);
+  expect(foundTask[0]?._id).toStrictEqual(fakeTaskId);
   expect(foundTask[0]?.task).toBe("Go To Market");
   expect(foundTask[0]?.list).toStrictEqual(fakeTaskListId);
 });
@@ -75,6 +78,7 @@ test("Move task", async () => {
   });
 
   const fakeTask = await Task.create({
+    _id: mongoose.Types.ObjectId(),
     task: "Go to market",
     list: fakeOldTaskList._id,
   });
@@ -109,14 +113,16 @@ test("Move task", async () => {
   );
   expect(mockResponse.respond).toHaveBeenCalledWith({
     _id: fakeTask._id,
-    __v: 0,
-    task: "Go to market",
+    completed: false,
     list: fakeNewTaskList._id,
+    task: "Go to market",
+    __v: 0,
   });
 });
 
 test("Remove task", async () => {
   const fakeTask = await Task.create({
+    _id: mongoose.Types.ObjectId(),
     task: "Go To Market",
     list: mongoose.Types.ObjectId(),
   });
