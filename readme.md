@@ -10,11 +10,9 @@ npm run dev
 
 #### Serverless
 
-1. Run locally using serverless:
+If you want, you can run the application using serverless
 
-```
-npx netlify dev -p 5000
-```
+1. Run `npx netlify dev -p 5000`
 
 2. Open http://localhost:5000/.netlify/functions/index
 
