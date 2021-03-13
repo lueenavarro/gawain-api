@@ -9,8 +9,7 @@ import { handleError } from "middleware/errors";
 import { RouteNotFoundError } from "errors";
 
 import { createDatabaseConnection } from "database/createConnection";
-
-import * as tasks from "controllers/tasks";
+import { attachPrivateRoutes } from "./routes";
 
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
@@ -27,12 +26,7 @@ const initializeExpress = (): void => {
 
   app.use(addRespondToResponse);
 
-  router.get("/tasks", tasks.find);
-  router.post("/tasks", tasks.create);
-  router.post("/tasks/move", tasks.move);
-  router.patch("/tasks/complete/:id", tasks.complete);
-  router.delete("/tasks/:id", tasks.remove);
-  app.use("/.netlify/functions/index", router); // path must route to lambda
+  attachPrivateRoutes(app);
 
   app.use((req, _res, next) => next(new RouteNotFoundError(req.originalUrl)));
   app.use(handleError);
@@ -44,7 +38,6 @@ const initializeApp = async (): Promise<void> => {
 };
 
 export const app = express();
-const router = express.Router();
 initializeApp();
 
 export async function handler() {

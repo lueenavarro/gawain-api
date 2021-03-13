@@ -1,8 +1,13 @@
 const path = require("path");
+const slsw = require("serverless-webpack");
 
 module.exports = {
+  mode: "production",
+  target: "node",
+  entry: slsw.lib.entries,
   resolve: {
-    modules: ["node_modules", path.resolve(__dirname, "src")],
+    modules: [path.resolve(__dirname, "src"), "node_modules"],
+    extensions: [".ts", ".js"],
   },
   module: {
     rules: [

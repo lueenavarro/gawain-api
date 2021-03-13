@@ -1,0 +1,23 @@
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+service: onestep-api
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: prod
+  region: us-east-1
+
+functions:
+  onestep:
+    handler: src/index.handler
+    events:
+      - http:
+          method: ANY
+          path: /{proxy+}
+
+custom:
+  webpack:
+    webpackConfig: "webpack.config.js"
