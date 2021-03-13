@@ -15,8 +15,11 @@ functions:
     handler: src/index.handler
     events:
       - http:
+          path: /
           method: ANY
-          path: /{proxy+}
+      - http:
+          path: /{any+}
+          method: ANY
 
 custom:
   webpack:
