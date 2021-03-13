@@ -3,6 +3,7 @@ import express from "express";
 
 export const attachPrivateRoutes = () => {
   const routes = express.Router();
+  routes.get("/", (_req, res) => res.respond("ONESTEP API"));
   routes.get("/tasks", tasks.find);
   routes.post("/tasks", tasks.create);
   routes.post("/tasks/move", tasks.move);
