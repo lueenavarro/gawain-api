@@ -24,10 +24,7 @@ const initializeExpress = (): void => {
 
   app.use(addRespondToResponse);
 
-  app.use(
-    isServerless ? "/.netlify/functions/index" : "/",
-    attachPrivateRoutes()
-  );
+  app.use(rootPath, attachPrivateRoutes());
 
   app.use((req, _res, next) => next(new RouteNotFoundError(req.originalUrl)));
   app.use(handleError);
@@ -38,17 +35,17 @@ const initializeApp = async (): Promise<void> => {
   initializeExpress();
 };
 
-let isServerless = false;
+let rootPath = "/";
 const app = express();
 
 export const handler = async (event: any, context: any) => {
-  isServerless = true;
+  rootPath = "/.netlify/functions/index";
   await initializeApp();
   return serverless(app)(event, context);
 };
 
 export const runLocalServer = () => {
   initializeApp();
-  const port = process.env.PORT || 5200;
+  const port = process.env.PORT || 5000;
   app.listen(port, () => console.log(`listening at port ${port}`));
 };
