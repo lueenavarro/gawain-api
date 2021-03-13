@@ -1,9 +1,12 @@
 import * as tasks from "controllers/tasks";
+import express from "express";
 
-export const attachPrivateRoutes = (app: any): void => {
-  app.get("/tasks", tasks.find);
-  app.post("/tasks", tasks.create);
-  app.post("/tasks/move", tasks.move);
-  app.patch("/tasks/complete/:id", tasks.complete);
-  app.delete("/tasks/:id", tasks.remove);
+export const attachPrivateRoutes = () => {
+  const routes = express.Router();
+  routes.get("/tasks", tasks.find);
+  routes.post("/tasks", tasks.create);
+  routes.post("/tasks/move", tasks.move);
+  routes.patch("/tasks/complete/:id", tasks.complete);
+  routes.delete("/tasks/:id", tasks.remove);
+  return routes;
 };

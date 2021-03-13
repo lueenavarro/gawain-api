@@ -9,7 +9,7 @@ import { handleError } from "middleware/errors";
 import { RouteNotFoundError } from "errors";
 
 import { createDatabaseConnection } from "database/createConnection";
-import { attachPrivateRoutes } from "./routes";
+import { attachPrivateRoutes } from "routes";
 
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
@@ -26,7 +26,7 @@ const initializeExpress = (): void => {
 
   app.use(addRespondToResponse);
 
-  attachPrivateRoutes(app);
+  app.use("/.netlify/functions/index", attachPrivateRoutes());
 
   app.use((req, _res, next) => next(new RouteNotFoundError(req.originalUrl)));
   app.use(handleError);
