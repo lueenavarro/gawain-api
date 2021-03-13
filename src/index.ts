@@ -38,8 +38,6 @@ const initializeApp = async (): Promise<void> => {
 };
 
 export const app = express();
-initializeApp();
-
 export async function handler() {
   await initializeApp();
   return serverless(app);
