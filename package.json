@@ -5,7 +5,7 @@
   "license": "ISC",
   "private": true,
   "scripts": {
-    "dev": "nodemon --files src/local.ts",
+    "dev": "nodemon --files server-local.ts",
     "build": "netlify-lambda build -c webpack.config.js src",
     "test": "jest --watchAll --detectOpenHandles --runInBand"
   },
