@@ -13,6 +13,6 @@ export const attachPrivateRoutes = () => {
 
   routes.get("/user", user.findUser)
   routes.post("/user/signup", user.signup)
-  routes.post("/user/login")
+  routes.post("/user/login", user.login)
   return routes;
 };
