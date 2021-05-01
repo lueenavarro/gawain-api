@@ -13,6 +13,7 @@ export const signup = catchErrors(async (req, res) => {
   await user.save();
 
   res.status(201).send({
+    ...mapUser(user),
     accessToken: token.generateAccessToken({ email }),
     refreshToken: await getAndSaveRefreshToken(user),
   });
@@ -34,6 +35,7 @@ export const login = catchErrors(async (req, res) => {
   }
 
   res.respond({
+    ...mapUser(user),
     accessToken: token.generateAccessToken({ email }),
     refreshToken: await getAndSaveRefreshToken(user),
   });
