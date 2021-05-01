@@ -14,7 +14,7 @@ export const signup = catchErrors(async (req, res) => {
 
   res.status(201).send({
     accessToken: token.generateAccessToken({ email }),
-    refreshToken: await getNewRefreshToken(user),
+    refreshToken: await getAndSaveRefreshToken(user),
   });
 });
 
@@ -35,7 +35,7 @@ export const login = catchErrors(async (req, res) => {
 
   res.respond({
     accessToken: token.generateAccessToken({ email }),
-    refreshToken: await getNewRefreshToken(user),
+    refreshToken: await getAndSaveRefreshToken(user),
   });
 });
 
@@ -54,7 +54,7 @@ const mapUser = (user: IUser) => ({
   verified: user.verified,
 });
 
-const getNewRefreshToken = async (user: IUser) => {
+const getAndSaveRefreshToken = async (user: IUser) => {
   const refreshToken = token.generateRefreshToken();
   const refreshTokenData = new RefreshToken();
   refreshTokenData.refreshToken = refreshToken;
