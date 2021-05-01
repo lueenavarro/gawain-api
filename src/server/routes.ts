@@ -1,4 +1,5 @@
 import * as tasks from "controllers/tasks";
+import * as user from "controllers/user";
 import express from "express";
 
 export const attachPrivateRoutes = () => {
@@ -9,5 +10,9 @@ export const attachPrivateRoutes = () => {
   routes.post("/tasks/move", tasks.move);
   routes.patch("/tasks/complete/:id", tasks.complete);
   routes.delete("/tasks/:id", tasks.remove);
+
+  routes.get("/user", user.findUser)
+  routes.post("/user/signup", user.signup)
+  routes.post("/user/login")
   return routes;
 };
