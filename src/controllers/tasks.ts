@@ -78,9 +78,10 @@ export const move = catchErrors(async (req, res) => {
 
 export const remove = catchErrors(async (req, res) => {
   const task = await Task.findOne({ _id: req.params.id });
-  await task?.deleteOne();
 
   if (task) {
+    await task.deleteOne();
+
     const user = token.verifyAccessToken(
       req.signedCookies.accessToken
     ) as IUser;
