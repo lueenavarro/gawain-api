@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { pick } from "lodash";
 import token from "utils/token";
 
 export const addRespondToResponse: RequestHandler = (_req, res, next) => {
@@ -10,11 +11,9 @@ export const addRespondToResponse: RequestHandler = (_req, res, next) => {
 
 export const addTokenHandler: RequestHandler = (_req, res, next) => {
   res.generateAccessToken = (user: any) => {
-    const accessToken = token.generateAccessToken({
-      _id: user._id,
-      email: user.email,
-      verified: user.verified,
-    });
+    const accessToken = token.generateAccessToken(
+      pick(user, ["_id", "task", "completed"])
+    );
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "strict",

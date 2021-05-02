@@ -7,7 +7,6 @@ export const getUserFromAccessToken = catchErrors((req, res) => {
   if (!accessToken) {
     throw new InvalidTokenError();
   }
-  console.log(accessToken);
   const user = token.verifyAccessToken(accessToken);
   res.respond(user);
 });
