@@ -85,7 +85,7 @@ export const remove = catchErrors(async (req, res) => {
       req.signedCookies.accessToken
     ) as IUser;
     const taskList = await TaskList.findOne({ _id: task.list, user: user._id });
-    await taskList?.update({ $pull: { tasks: task?._id } });
+    await taskList?.update({ $pull: { tasks: task._id } });
     await TaskList.deleteMany({ tasks: { $size: 0 } });
   }
 
