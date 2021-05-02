@@ -20,7 +20,7 @@ export const refreshAccessToken = catchErrors(async (req, res) => {
     if (rtData) {
       const user = await User.findOne({ _id: rtData.user });
       if (user) {
-        res.addAccessTokenToCookie(user);
+        res.generateAccessToken(user);
         res.send();
         return;
       }
@@ -28,5 +28,6 @@ export const refreshAccessToken = catchErrors(async (req, res) => {
     }
   }
   res.clearCookie("refreshToken");
+  await RefreshToken.deleteOne({ refreshToken });
   throw new InvalidTokenError();
 });

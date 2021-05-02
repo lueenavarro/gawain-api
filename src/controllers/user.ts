@@ -4,7 +4,6 @@ import { RefreshToken } from "schemas/RefreshToken";
 import { IUser, User } from "schemas/User";
 
 import passwordUtil from "utils/password";
-import token from "utils/token";
 
 export const signup = catchErrors(async (req, res) => {
   const { email, password } = req.body;
@@ -54,16 +53,15 @@ const mapUser = (user: IUser) => ({
 });
 
 const configureTokens = async (req: Request, res: Response, user: IUser) => {
-  res.addAccessTokenToCookie(user);
-  const existingRefreshToken = await RefreshToken.findOne({
+  res.generateAccessToken(user);
+  const currentRefreshToken = await RefreshToken.findOne({
     refreshToken: req.signedCookies.refreshToken,
   });
-  if (!existingRefreshToken) {
-    const newRefreshToken = token.generateRefreshToken();
+  if (!currentRefreshToken) {
+    const newRefreshToken = res.generateRefreshToken();
     const refreshToken = new RefreshToken();
     refreshToken.refreshToken = newRefreshToken;
     refreshToken.user = user._id;
     await refreshToken.save();
-    res.addRefreshTokenToCookie(newRefreshToken);
   }
 };
