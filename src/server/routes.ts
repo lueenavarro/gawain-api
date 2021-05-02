@@ -13,8 +13,9 @@ export const attachPrivateRoutes = () => {
   routes.delete("/tasks/:id", tasks.remove);
 
   routes.get("/user", user.findUser);
-  routes.post("/user/signup", user.signup);
+  routes.get("/user/logout", user.logout)
   routes.post("/user/login", user.login);
+  routes.post("/user/signup", user.signup);
 
   routes.get("/token/decode", token.getUserFromAccessToken);
   routes.get("/token/refresh", token.refreshAccessToken);

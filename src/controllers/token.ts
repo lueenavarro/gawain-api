@@ -1,6 +1,5 @@
 import { catchErrors, EntityNotFoundError, InvalidTokenError } from "errors";
-import { RefreshToken } from "schemas/RefreshToken";
-import { User } from "schemas/User";
+import { RefreshToken, User } from "schemas";
 import token from "utils/token";
 
 export const getUserFromAccessToken = catchErrors((req, res) => {

@@ -14,6 +14,10 @@ const taskListSchema = new Schema({
       ref: "Task",
     },
   ],
+  user:{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  }, 
 });
 
 export const TaskList = model<ITaskList>("TaskList", taskListSchema);

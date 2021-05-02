@@ -1,7 +1,6 @@
 import { catchErrors } from "errors";
 import { Request, Response } from "express";
-import { RefreshToken } from "schemas/RefreshToken";
-import { IUser, User } from "schemas/User";
+import { RefreshToken, IUser, User } from "schemas";
 
 import passwordUtil from "utils/password";
 
@@ -35,6 +34,15 @@ export const login = catchErrors(async (req, res) => {
   await configureTokens(req, res, user);
 
   res.respond(mapUser(user));
+});
+
+export const logout = catchErrors(async (req, res) => {
+  await RefreshToken.deleteOne({
+    refreshToken: req.signedCookies.refreshToken,
+  });
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.send();
 });
 
 export const findUser = catchErrors(async (req, res) => {
