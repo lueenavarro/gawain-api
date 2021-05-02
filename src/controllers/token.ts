@@ -3,31 +3,30 @@ import { RefreshToken } from "schemas/RefreshToken";
 import { User } from "schemas/User";
 import token from "utils/token";
 
-const getUserFromAccessToken = catchErrors((req, res) => {
+export const getUserFromAccessToken = catchErrors((req, res) => {
   const accessToken = req.signedCookies.accessToken;
   if (!accessToken) {
     throw new InvalidTokenError();
   }
+  console.log(accessToken);
   const user = token.verifyAccessToken(accessToken);
   res.respond(user);
 });
 
-const refreshToken = catchErrors(async (req, res) => {
-  const rt = req.signedCookies.refreshToken;
-  if (rt) {
-    const rtData = await RefreshToken.findOne({ refreshToken: rt });
+export const refreshAccessToken = catchErrors(async (req, res) => {
+  const refreshToken = req.signedCookies.refreshToken;
+  if (refreshToken) {
+    const rtData = await RefreshToken.findOne({ refreshToken });
     if (rtData) {
       const user = await User.findOne({ _id: rtData.user });
       if (user) {
-        res.addAccessTokenToCookie({
-          _id: user._id,
-          email: user.email,
-          verified: user.verified,
-        });
+        res.addAccessTokenToCookie(user);
+        res.send();
+        return;
       }
-
       throw new EntityNotFoundError("user");
     }
   }
+  res.clearCookie("refreshToken");
   throw new InvalidTokenError();
 });

@@ -1,4 +1,5 @@
 import { catchErrors } from "errors";
+import { Request, Response } from "express";
 import { RefreshToken } from "schemas/RefreshToken";
 import { IUser, User } from "schemas/User";
 
@@ -12,11 +13,9 @@ export const signup = catchErrors(async (req, res) => {
   user.password = await passwordUtil.hash(password);
   await user.save();
 
-  res.status(201).send({
-    user: mapUser(user),
-    accessToken: token.generateAccessToken({ email }),
-    refreshToken: await getAndSaveRefreshToken(user),
-  });
+  await configureTokens(req, res, user);
+
+  res.status(201).send(mapUser(user));
 });
 
 export const login = catchErrors(async (req, res) => {
@@ -34,11 +33,9 @@ export const login = catchErrors(async (req, res) => {
     return;
   }
 
-  res.respond({
-    user: mapUser(user),
-    accessToken: token.generateAccessToken({ email }),
-    refreshToken: await getAndSaveRefreshToken(user),
-  });
+  await configureTokens(req, res, user);
+
+  res.respond(mapUser(user));
 });
 
 export const findUser = catchErrors(async (req, res) => {
@@ -56,11 +53,17 @@ const mapUser = (user: IUser) => ({
   verified: user.verified,
 });
 
-const getAndSaveRefreshToken = async (user: IUser) => {
-  const refreshToken = token.generateRefreshToken();
-  const refreshTokenData = new RefreshToken();
-  refreshTokenData.refreshToken = refreshToken;
-  refreshTokenData.user = user._id;
-  await refreshTokenData.save();
-  return refreshToken;
-}
+const configureTokens = async (req: Request, res: Response, user: IUser) => {
+  res.addAccessTokenToCookie(user);
+  const existingRefreshToken = await RefreshToken.findOne({
+    refreshToken: req.signedCookies.refreshToken,
+  });
+  if (!existingRefreshToken) {
+    const newRefreshToken = token.generateRefreshToken();
+    const refreshToken = new RefreshToken();
+    refreshToken.refreshToken = newRefreshToken;
+    refreshToken.user = user._id;
+    await refreshToken.save();
+    res.addRefreshTokenToCookie(newRefreshToken);
+  }
+};
