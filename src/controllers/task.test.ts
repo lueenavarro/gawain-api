@@ -8,6 +8,13 @@ import * as tasks from "./tasks";
 
 beforeAll(startMockDB);
 afterAll(stopMockDB);
+const userReq = {
+  user: {
+    _id: mongoose.Types.ObjectId(),
+    email: "x@x.com",
+    verified: false,
+  },
+};
 
 let mockResponse: any;
 let next: any;
@@ -29,6 +36,7 @@ test("Create task", async () => {
       task: "Go To Market",
       date: "2021-03-03",
     },
+    ...userReq,
   };
 
   const foiSpy = jest.spyOn(dbutils, "findOrInsert");
@@ -44,8 +52,8 @@ test("Create task", async () => {
   const foundTask = await Task.find({ task: "Go To Market" });
   expect(foiSpy).toHaveBeenCalledWith(
     TaskList,
-    { date: "2021-03-03" },
-    { date: "2021-03-03" }
+    { date: "2021-03-03", user: mockRequest.user._id },
+    { date: "2021-03-03", user: mockRequest.user._id }
   );
   expect(foiSpy).toHaveBeenCalledTimes(1);
   expect(foundTask[0]).toStrictEqual(
@@ -63,6 +71,7 @@ test("Find task", async () => {
       start: "2021-02-28",
       end: "2021-03-01",
     },
+    ...userReq,
   };
   const dateRangeSpy = jest.spyOn(dateUtil, "dateRange");
   dateRangeSpy.mockReturnValue(["2021-02-28", "2021-03-01"]);
@@ -104,15 +113,19 @@ test("Move task", async () => {
       destination: { date: "2021-03-01", index: 1 },
       _id: fakeTask._id,
     },
+    ...userReq,
   };
 
   await tasks.move(mockRequest, mockResponse, next);
 
-  expect(fotSpy).toHaveBeenCalledWith(TaskList, { date: "2021-02-28" });
+  expect(fotSpy).toHaveBeenCalledWith(TaskList, {
+    date: "2021-02-28",
+    user: mockRequest.user._id,
+  });
   expect(foiSpy).toHaveBeenCalledWith(
     TaskList,
-    { date: "2021-03-01" },
-    { date: "2021-03-01" }
+    { date: "2021-03-01", user: mockRequest.user._id },
+    { date: "2021-03-01", user: mockRequest.user._id }
   );
   expect(mockResponse.respond).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -125,22 +138,40 @@ test("Move task", async () => {
 });
 
 test("Remove task", async () => {
+  const fakeTaskList = await TaskList.create({
+    date: "03-05-2021",
+    tasks: [],
+    user: userReq.user._id,
+  });
   const fakeTask = await Task.create({
     task: "Go To Market",
-    list: mongoose.Types.ObjectId(),
+    list: fakeTaskList._id,
   });
 
   const mockRequest: any = {
     params: {
       id: fakeTask._id,
     },
+    ...userReq,
   };
+
   const taskSpy = jest.spyOn(Task, "findOne");
+  const taskListSpy = jest.spyOn(TaskList, "findOne");
 
   await tasks.remove(mockRequest, mockResponse, next);
 
   expect(taskSpy).toHaveBeenCalledWith({ _id: mockRequest.params.id });
   expect(taskSpy).toHaveBeenCalledTimes(1);
+  expect(taskListSpy).toHaveBeenCalledWith({
+    _id: fakeTask.list,
+    user: mockRequest.user._id,
+  });
+  expect(
+    await TaskList.findOne({
+      _id: fakeTask.list,
+      user: mockRequest.user._id,
+    })
+  ).toBe(null);
   expect(mockResponse.respond).not.toHaveBeenCalledWith(null);
 });
 

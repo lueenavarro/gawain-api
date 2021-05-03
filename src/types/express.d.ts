@@ -4,4 +4,8 @@ declare namespace Express {
     generateAccessToken: (user: any) => string;
     generateRefreshToken: () => string;
   }
+
+  export interface Request {
+    user: any;
+  }
 }

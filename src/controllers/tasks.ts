@@ -1,20 +1,18 @@
 import { map, pick } from "lodash";
 
 import { catchErrors } from "errors";
-import { IUser, Task, TaskList } from "schemas";
+import { Task, TaskList } from "schemas";
 import { dateRange, getDay } from "utils/date";
 import { findOrInsert, findOrThrow } from "utils/db";
 import { KeyString } from "types";
-import token from "utils/token";
 
 export const create = catchErrors(async (req, res) => {
   const { _id, task: newTask, date } = req.body;
 
-  const user = token.verifyAccessToken(req.signedCookies.accessToken) as IUser;
   const taskList = await findOrInsert(
     TaskList,
-    { date, user: user._id },
-    { date, user: user._id }
+    { date, user: req.user._id },
+    { date, user: req.user._id }
   );
   const task = await Task.create({
     _id,
@@ -29,11 +27,11 @@ export const create = catchErrors(async (req, res) => {
 
 export const find = catchErrors(async (req, res) => {
   const tasks: KeyString<any> = {};
-  const user = token.verifyAccessToken(req.signedCookies.accessToken) as IUser;
   for (let date of dateRange(<string>req.query.start, <string>req.query.end)) {
-    const taskList = await TaskList.findOne({ date, user: user._id }).populate(
-      "tasks"
-    );
+    const taskList = await TaskList.findOne({
+      date,
+      user: req.user._id,
+    }).populate("tasks");
     tasks[date] = {
       date: date,
       day: getDay(date),
@@ -48,18 +46,17 @@ export const find = catchErrors(async (req, res) => {
 
 export const move = catchErrors(async (req, res) => {
   const { source, destination, _id } = req.body;
-  const user = token.verifyAccessToken(req.signedCookies.accessToken) as IUser;
 
   const oldTaskList = await findOrThrow(TaskList, {
     date: source.date,
-    user: user._id,
+    user: req.user._id,
   });
   await oldTaskList.updateOne({ $pull: { tasks: _id } });
 
   const newTaskList = await findOrInsert(
     TaskList,
-    { date: destination.date, user: user._id },
-    { date: destination.date, user: user._id }
+    { date: destination.date, user: req.user._id },
+    { date: destination.date, user: req.user._id }
   );
   await newTaskList.updateOne({
     $push: { tasks: { $each: [_id], $position: destination.index } },
@@ -82,10 +79,10 @@ export const remove = catchErrors(async (req, res) => {
   if (task) {
     await task.deleteOne();
 
-    const user = token.verifyAccessToken(
-      req.signedCookies.accessToken
-    ) as IUser;
-    const taskList = await TaskList.findOne({ _id: task.list, user: user._id });
+    const taskList = await TaskList.findOne({
+      _id: task.list,
+      user: req.user._id,
+    });
     await taskList?.update({ $pull: { tasks: task._id } });
     await TaskList.deleteMany({ tasks: { $size: 0 } });
   }
