@@ -5,4 +5,5 @@ export const createDatabaseConnection = () =>
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true
   });
