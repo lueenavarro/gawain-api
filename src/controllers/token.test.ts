@@ -96,10 +96,7 @@ describe("refreshToken", () => {
         refreshToken: "someValidRefreshToken",
       },
     };
-
-    const fakeUser = {
-      _id: "1234",
-    }
+    
     refreshTokenFindOneSpy.mockReturnValue({
       refreshToken: mockRequest.signedCookies.refreshToken,
       user: fakeUser._id,
