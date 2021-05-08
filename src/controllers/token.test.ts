@@ -11,7 +11,7 @@ jest.mock("errors", () => {
 });
 
 const mockResponse = {
-  respond: jest.fn((data: any) => data),
+  respond: jest.fn((_data) => {}),
   clearCookie: jest.fn((_cookieName) => {}),
   generateAccessToken: jest.fn((user) => user),
   send: jest.fn((_data) => {}),
