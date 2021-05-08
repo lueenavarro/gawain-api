@@ -83,7 +83,7 @@ export const remove = catchErrors(async (req, res) => {
       _id: task.list,
       user: req.user._id,
     });
-    await taskList?.update({ $pull: { tasks: task._id } });
+    await taskList?.updateOne({ $pull: { tasks: task._id } });
     await TaskList.deleteMany({ tasks: { $size: 0 } });
   }
 
