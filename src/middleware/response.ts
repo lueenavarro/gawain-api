@@ -12,7 +12,7 @@ export const addRespondToResponse: RequestHandler = (_req, res, next) => {
 export const addTokenHandler: RequestHandler = (_req, res, next) => {
   res.generateAccessToken = (user: any) => {
     const accessToken = token.generateAccessToken(
-      pick(user, ["_id", "task", "completed"])
+      pick(user, ["_id", "email", "verified"])
     );
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
