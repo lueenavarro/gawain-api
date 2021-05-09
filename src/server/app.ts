@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
-import { addRespondToResponse } from "middleware/response";
+import { addRespondToResponse, addTokenHandler } from "middleware/response";
 import { handleError } from "middleware/errors";
 import { RouteNotFoundError } from "errors";
 import { createDatabaseConnection } from "database/createConnection";
@@ -16,11 +17,18 @@ const establishDatabaseConnection = async (): Promise<void> => {
 };
 
 const initializeExpress = (rootPath: string): void => {
-  app.use(cors());
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+  app.use(cookieParser(process.env.COOKIE_SECRET));
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
   app.use(addRespondToResponse);
+  app.use(addTokenHandler);
 
   app.use(rootPath, attachPrivateRoutes());
 
