@@ -10,15 +10,20 @@ export const addRespondToResponse: RequestHandler = (_req, res, next) => {
 };
 
 export const addTokenHandler: RequestHandler = (_req, res, next) => {
+  const commonCookieOptions = {
+    httpOnly: true,
+    sameSite: true,
+    signed: true,
+    secure: process.env.SETTINGS !== "development",
+  };
+  
   res.generateAccessToken = (user: any) => {
     const accessToken = token.generateAccessToken(
       pick(user, ["_id", "email", "verified"])
     );
     res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      sameSite: "strict",
+      ...commonCookieOptions,
       maxAge: 300000, // 5 minutes
-      signed: true,
     });
 
     return accessToken;
@@ -27,10 +32,8 @@ export const addTokenHandler: RequestHandler = (_req, res, next) => {
   res.generateRefreshToken = () => {
     const refreshToken = token.generateRefreshToken();
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: "strict",
+      ...commonCookieOptions,
       maxAge: 1296000000, // 15 days
-      signed: true,
     });
 
     return refreshToken;
