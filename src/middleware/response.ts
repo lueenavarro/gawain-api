@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { CookieOptions, RequestHandler } from "express";
 import { pick } from "lodash";
 import token from "utils/token";
 
@@ -10,8 +10,9 @@ export const addRespondToResponse: RequestHandler = (_req, res, next) => {
 };
 
 export const addTokenHandler: RequestHandler = (_req, res, next) => {
-  const commonCookieOptions = {
+  const commonCookieOptions: CookieOptions = {
     httpOnly: true,
+    sameSite: "lax",
     signed: true,
     secure: process.env.SETTINGS !== "development",
   };
