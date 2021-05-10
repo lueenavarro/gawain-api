@@ -16,10 +16,22 @@ const establishDatabaseConnection = async (): Promise<void> => {
   }
 };
 
+let origin = "";
+switch (process.env.SETTINGS) {
+  case "development": {
+    origin = "http://localhost:3000";
+    break;
+  }
+  case "production": {
+    origin = "https://onestep-client.netlify.app";
+    break;
+  }
+}
+
 const initializeExpress = (rootPath: string): void => {
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin,
       credentials: true,
     })
   );
