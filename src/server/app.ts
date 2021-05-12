@@ -16,19 +16,17 @@ const establishDatabaseConnection = async (): Promise<void> => {
   }
 };
 
-let origin = "";
-switch (process.env.SETTINGS) {
-  case "development": {
-    origin = "http://localhost:3000";
-    break;
+const getOrigin = () => {
+  const settings = process.env.SETTINGS;
+  if (settings === "development") {
+    return "http://localhost:3000";
+  } else if (settings === "production") {
+    return "https://onestep-client.netlify.app";
   }
-  case "production": {
-    origin = "https://onestep-client.netlify.app";
-    break;
-  }
-}
+};
 
 const initializeExpress = (rootPath: string): void => {
+  const origin = getOrigin() || "";
   app.use(
     cors({
       origin,
@@ -40,7 +38,7 @@ const initializeExpress = (rootPath: string): void => {
   app.use(express.json());
 
   app.use(addRespondToResponse);
-  app.use(addTokenHandler);
+  app.use(addTokenHandler(origin, process.env.SETTINGS !== "development"));
 
   app.use(rootPath, attachPrivateRoutes());
 
