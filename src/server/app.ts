@@ -38,7 +38,7 @@ const initializeExpress = (rootPath: string): void => {
   app.use(express.json());
 
   app.use(addRespondToResponse);
-  app.use(addTokenHandler(origin, process.env.SETTINGS !== "development"));
+  app.use(addTokenHandler(process.env.SETTINGS !== "development"));
 
   app.use(rootPath, attachPrivateRoutes());
 
