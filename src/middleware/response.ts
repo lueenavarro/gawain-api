@@ -12,7 +12,7 @@ export const addRespondToResponse: RequestHandler = (_req, res, next) => {
 export const addTokenHandler: RequestHandler = (_req, res, next) => {
   const commonCookieOptions: CookieOptions = {
     httpOnly: true,
-    sameSite: false,
+    sameSite: "none",
     signed: true,
     secure: process.env.SETTINGS !== "development",
   };
