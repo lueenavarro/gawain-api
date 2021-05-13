@@ -10,12 +10,14 @@ export const addRespondToResponse: RequestHandler = (_req, res, next) => {
 };
 
 export const addTokenHandler =
-  (secure: boolean): RequestHandler =>
+  (origin: string, secure: boolean): RequestHandler =>
   (_req, res, next) => {
+    const domain = new URL(origin).hostname;
     const commonCookieOptions: CookieOptions = {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: true,
       signed: true,
+      domain,
       secure,
     };
 

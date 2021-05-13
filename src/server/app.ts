@@ -21,7 +21,7 @@ const getOrigin = () => {
   if (settings === "development") {
     return "http://localhost:3000";
   } else if (settings === "production") {
-    return "https://onestep-client.netlify.app";
+    return "https://api.gawain.ml";
   }
 };
 
@@ -38,7 +38,7 @@ const initializeExpress = (rootPath: string): void => {
   app.use(express.json());
 
   app.use(addRespondToResponse);
-  app.use(addTokenHandler(process.env.SETTINGS !== "development"));
+  app.use(addTokenHandler(origin, process.env.SETTINGS !== "development"));
 
   app.use(rootPath, attachPrivateRoutes());
 
