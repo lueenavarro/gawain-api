@@ -21,7 +21,7 @@ const getOrigin = () => {
   if (settings === "development") {
     return "http://localhost:3000";
   } else if (settings === "production") {
-    return "https://api.gawain.ml";
+    return "https://gawain.ml";
   }
 };
 
