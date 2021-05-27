@@ -7,8 +7,13 @@ export const getUserFromAccessToken = catchErrors((req, res) => {
   if (!accessToken) {
     throw new InvalidTokenError();
   }
-  const user = token.verifyAccessToken(accessToken);
-  res.respond(user);
+
+  try {
+    const user = token.verifyAccessToken(accessToken);
+    res.respond(user);
+  } catch (error) {
+    throw new InvalidTokenError();
+  }
 });
 
 export const refreshAccessToken = catchErrors(async (req, res) => {
