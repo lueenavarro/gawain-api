@@ -1,12 +1,12 @@
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
-import { addRespondToResponse, addTokenHandler } from "middleware/response";
-import { handleError } from "middleware/errors";
-import { RouteNotFoundError } from "errors";
-import { createDatabaseConnection } from "database/createConnection";
-import { attachPrivateRoutes } from "server/routes";
+import { addRespondToResponse, addTokenHandler } from 'middleware/response';
+import { handleError } from 'middleware/errors';
+import { RouteNotFoundError } from 'errors';
+import { createDatabaseConnection } from 'database/createConnection';
+import { attachPrivateRoutes } from 'server/routes';
 
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
@@ -18,15 +18,15 @@ const establishDatabaseConnection = async (): Promise<void> => {
 
 const getOrigin = () => {
   const settings = process.env.SETTINGS;
-  if (settings === "development") {
-    return "http://localhost:3000";
-  } else if (settings === "production") {
-    return "https://gawain.ml";
+  if (settings === 'development') {
+    return 'http://localhost:3000';
+  } else if (settings === 'production') {
+    return 'https://gawain.louienavarro.me';
   }
 };
 
 const initializeExpress = (rootPath: string): void => {
-  const origin = getOrigin() || "";
+  const origin = getOrigin() || '';
   app.use(
     cors({
       origin,
@@ -38,7 +38,7 @@ const initializeExpress = (rootPath: string): void => {
   app.use(express.json());
 
   app.use(addRespondToResponse);
-  app.use(addTokenHandler(origin, process.env.SETTINGS !== "development"));
+  app.use(addTokenHandler(origin, process.env.SETTINGS !== 'development'));
 
   app.use(rootPath, attachPrivateRoutes());
 
@@ -46,7 +46,7 @@ const initializeExpress = (rootPath: string): void => {
   app.use(handleError);
 };
 
-export const initializeApp = async (rootPath = "/"): Promise<void> => {
+export const initializeApp = async (rootPath = '/'): Promise<void> => {
   await establishDatabaseConnection();
   initializeExpress(rootPath);
 };
